@@ -61,7 +61,7 @@ define token instr (16)
     i16      = (0,15)
     cri      = (0,3)
     crj      = (4,7)
-    copcc    = (9,15)
+    copcc    = (8,15)
 
 @ifdef FR81_EXTENSION
     fri      = (0,3)
@@ -370,9 +370,9 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
 }
 
 # ADD2 #u4, Ri C A5 1 CCCC Ri + extu(i4) --> Ri  (minus extension)
-:ADD2 #i4, ri is op8=0xa5 & i4 & ri {
-    local res:4 = ri + i4;
-    addFlags(res, ri, i4);
+:ADD2 #m4_imm, ri is op8=0xa5 & u4 & ri [ m4_imm = u4 - 16; ] {
+    local res:4 = ri + m4_imm;
+    addFlags(res, ri, m4_imm);
     ri = res;
 }
 
@@ -399,8 +399,8 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
 }
 
 # ADDN2 #u4, Ri C A1 1 ---- Ri + extu(i4) --> Ri (minux extension)
-:ADDN2 #i4, ri is op8=0xa1 & i4 & ri {
-    ri = ri + i4;
+:ADDN2 #m4_imm, ri is op8=0xa1 & u4 & ri [ m4_imm = u4 - 16; ] {
+    ri = ri + m4_imm;
 }
 
 # ====
@@ -445,9 +445,9 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
 }
 
 # CMP2 #u4, Ri C A9 1 CCCC Ri - extu(i4) Minus extension
-:CMP2 #i4, ri is op8=0xa9 & i4 & ri {
-    res:4 = ri - i4;
-    subFlags(res, ri, i4);
+:CMP2 #m4_imm, ri is op8=0xa9 & u4 & ri [ m4_imm = u4 - 16; ] {
+    local res:4 = ri - m4_imm;
+    subFlags(res, ri, m4_imm);
 }
 
 # ====
@@ -715,9 +715,10 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
 }
 
 # LSL2 #u4, Ri C B5 1 CC-C Ri <<(u4+16) --> Ri
-:LSL2 #u4_imm, ri is op8=0xb5 & u4 & ri [ u4_imm = u4 + 16; ] {
-    C = ((ri << u4_imm -1) & 0x80000000) != 0;
-    ri = ri << u4_imm;
+:LSL2 #u4, ri is op8=0xb5 & u4 & ri {
+    local shiftAmount:4 = u4 + 16;
+    C = ((ri << (shiftAmount - 1)) & 0x80000000) != 0;
+    ri = ri << shiftAmount;
     resultFlags(ri);
 }
 
@@ -748,9 +749,10 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
 }
 
 #LSR2 #u4, Ri C B1 1 CC-C Ri >>(u4+16) --> Ri
-:LSR2 #u4_imm, ri is op8=0xb1 & u4 & ri [ u4_imm = u4 + 16; ] {
-    C = ((ri >> u4_imm -1) & 0x1) != 0;
-    ri = ri >> u4_imm;
+:LSR2 #u4, ri is op8=0xb1 & u4 & ri {
+    local shiftAmount:4 = u4 + 16;
+    C = ((ri >> (shiftAmount - 1)) & 0x1) != 0;
+    ri = ri >> shiftAmount;
     resultFlags(ri);
 }
 
@@ -781,9 +783,10 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
 }
 
 #ASR2 #u4, Ri C B9 1 CC-C Ri >>(u4+16) --> Ri
-:ASR2 #u4_imm, ri is op8=0xb9 & u4 & ri [ u4_imm = u4 + 16; ] {
-    C = ((ri >> u4_imm -1) & 0x1) != 0;
-    ri = ri >> u4_imm;
+:ASR2 #u4, ri is op8=0xb9 & u4 & ri {
+    local shiftAmount:4 = u4 + 16;
+    C = ((ri s>> (shiftAmount - 1)) & 0x1) != 0;
+    ri = ri s>> shiftAmount;
     resultFlags(ri);
 }
 
@@ -1223,7 +1226,7 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
 }
 
 # COPSV #u4, #u8, CRj, Ri E 9F-F 1+2a ---- CRj --> Ri
-:COPSV #ccu4, #copcc, crj, ri is op12=0x9ff & ccu4 & copcc & crj & ri {
+:COPSV #ccu4, #copcc, crj, ri is op12=0x9ff & ccu4 ; copcc & crj & ri {
     local tmp0:4 = ccu4;
     local tmp1:4 = copcc;
     local tmp2:4 = crj;

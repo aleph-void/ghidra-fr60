@@ -1,5 +1,9 @@
 Fujitsu FR60 Ghidra Plugin
 ----
+Ghidra-Rare fork: the FR60/FR81 languages and public-source binary results are documented in
+[GHIDRA-RARE.md](GHIDRA-RARE.md), with original authorship in [CREDITS.md](CREDITS.md).
+Install the Ghidra 12 release zip from this fork's Releases page.
+
 This repository contains a plugin for Ghidra that enables decompilation support for FR60 processors from Fujitsu. In
 particular this project targets the MB91302A used in the PlayStation PSX. It includes a loader for the DVRP firmware
 used in the PSX to help automatically setup memory ranges.
@@ -8,10 +12,10 @@ There is no reason why this plugin cannot be used with other processors from thi
 functionality may be unimplemented, specifically the Co-Processor logic is completely stubbed out in this plugin.
 
 ## Building
-This project is tested on Ghidra 12.0.4 and requires Java 21. Use the Gradle wrapper bundled with
+This fork is tested on Ghidra 12.1.4 and requires Java 21. Use the Gradle wrapper bundled with
 the target Ghidra install so the build matches Ghidra's required Gradle version.
 ```shell
-export GHIDRA_INSTALL_DIR=/path/to/ghidra_12.0.4_PUBLIC
+export GHIDRA_INSTALL_DIR=/path/to/ghidra_12.1.4_PUBLIC
 "$GHIDRA_INSTALL_DIR/support/gradle/gradlew" buildExtension \
   -PGHIDRA_INSTALL_DIR="$GHIDRA_INSTALL_DIR"
 ```

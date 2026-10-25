@@ -3,7 +3,7 @@
 		<register_mapping dwarf="0" ghidra="R0" auto_count="13"/> <!-- R0..R11 -->
 		<register_mapping dwarf="13" ghidra="AC"/>
 		<register_mapping dwarf="14" ghidra="FP"/>
-		<register_mapping dwarf="15" ghidra="SP" stackpointer="true/>
+		<register_mapping dwarf="15" ghidra="SP" stackpointer="true"/>
 		<register_mapping dwarf="16" ghidra="PC"/>
 		<register_mapping dwarf="17" ghidra="RP"/>
 		<register_mapping dwarf="18" ghidra="SSP"/>
